@@ -8,14 +8,14 @@ from StockData import StockData
 class StockPricePredictor:
     def run_test(self):
         # Set the ticker symbol for testing
-        ticker_symbol = "AAPL"
+        ticker_symbol = "V"
 
         # Initialize the StockData class
         stock_data = StockData()  
         data, history = stock_data.getStockData(ticker_symbol)
 
         # Retrieve recent news headlines
-        headlines = stock_data.retrieveNewsHeading(ticker_symbol)
+        headlines = stock_data.retrieveNewsHeadlines(ticker_symbol)
 
         # Check if any headlines were retrieved
         if not headlines:
@@ -44,4 +44,3 @@ class StockPricePredictor:
 if __name__ == "__main__":
     test_stock_data = StockPricePredictor()  
     test_stock_data.run_test()  
-

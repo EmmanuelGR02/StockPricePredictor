@@ -9,7 +9,7 @@ import numpy as np
 
 class StockData:
     # return the most recent headlines for the given stock
-    def retrieveNewsHeading(self, symbol):
+    def retrieveNewsHeadlines(self, symbol):
         # Get the news for the ticker symbol stock
         ticker = yf.Ticker(symbol)
         news = ticker.news
@@ -23,7 +23,7 @@ class StockData:
         headlinesDict = {}
         for article in news:
             # Print the entire article for debugging
-            print("Article:", article)  # Debugging line
+            print("Article:", article) 
             
             # Safely get the providerPublishTime
             publish_time_unix = article.get('providerPublishTime')
