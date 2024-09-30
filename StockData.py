@@ -39,7 +39,7 @@ class StockData:
         
 
     # use open AI API to ask it if the given news are good or bad (0,1)
-    def getNews(self, headlines, symbol):
+    def getSentimentValues(self, headlines, symbol):
         # get key from env file
         openai.api_key = os.getenv("OPEN_AI_KEY")
         valuesList = []

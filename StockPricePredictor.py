@@ -28,7 +28,7 @@ class StockPricePredictor:
             print(f"- {title}: {link}")
 
         # Use OpenAI API to get the news sentiment
-        news_sentiment = stock_data.getNews(headlines, ticker_symbol)
+        news_sentiment = stock_data.getSentimentValues(headlines, ticker_symbol)
 
         # Print the results
         print(f"Sentiment results for {ticker_symbol}: {news_sentiment}")
