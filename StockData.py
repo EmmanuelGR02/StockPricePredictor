@@ -3,6 +3,9 @@ import openai
 import yfinance as yf
 from datetime import datetime, timedelta
 import pytz
+import pandas as panda
+import matplotlib.pyplot as plt
+import numpy as np
 
 class StockData:
     # return the most recent headlines for the given stock
@@ -97,4 +100,72 @@ class StockData:
             print("-1s count = " + str(invalidCount) )
 
         return valuesList
+    
+    def getStockData(self, symbol):
+        # get data about the stock from yfinance
+        stock = yf.Ticker(symbol)
+        history = stock.history(period = "1y")
+
+        # calculate MAs
+        history["5MA"] = history["Close"].rolling(window = 5).mean()
+        history["10MA"] = history["Close"].rolling(window = 10).mean()
+        history["25MA"] = history["Close"].rolling(window = 25).mean()
+        history["50MA"] = history["Close"].rolling(window = 50).mean()
+        history["100MA"] = history["Close"].rolling(window = 100).mean()
+
+        # Get price metrics
+        currentPrice = history["Close"][-1]
+        openPrice = history["Open"][-1]
+        averagePrice = (history["High"] + history["Low"]) / 2
+
+        priceChange = currentPrice - openPrice
+        history["LongReturn"] = (history["Close"] / history["Close"].shift(1)).apply(lambda x: np.log(x))
+        volatility = history["LongReturn"].std()
+
+        averageVolume = history["Volume"].rolling(window = 10).mean()
+        currentVolume = history["Volume"][-1]
+        volumeChange = currentVolume - averageVolume[-1]
+
+        PEratio = stock.info.get("trailingPE")
+        eps = stock.info.get("trailingEps")
+
+        # More data? 
+
+        # dictinonary to store results
+        stockData = {
+            "Current Price" : currentPrice,
+            "open Price" : openPrice,
+            "Average Price" : averagePrice,
+            "Price Change" : priceChange,
+            "5MA" : history["5MA"][-1],
+            "10MA" : history["10MA"][-1],
+            "25MA" : history["25MA"][-1],
+            "50MA" : history["50MA"][-1],
+            "100MA" : history["100MA"][-1],
+            "Volatility" : volatility,
+            "Volume Change" : volumeChange,
+            "PE Ratio" : PEratio,
+            "EPS" : eps
+        }
+        
+        return stockData, history
+    
+    # visualize stock data
+    def plot_stock_data(self, symbol, history):
+
+        # Plot the stock price and moving averages
+        plt.figure(figsize=(10,6))
+        plt.plot(history['Close'], label='Close Price', color='blue')
+        plt.plot(history['5MA'], label='5-Day MA', color='red')
+        plt.plot(history['10MA'], label='10-Day MA', color='green')
+        plt.plot(history['25MA'], label='25-Day MA', color='purple')
+        plt.plot(history['50MA'], label='50-Day MA', color='orange')
+        plt.plot(history['100MA'], label='100-Day MA', color='brown')
+
+        plt.title(f'{symbol} Price and Moving Averages')
+        plt.xlabel('Date')
+        plt.ylabel('Price')
+        plt.legend()
+        plt.show()
+    
     
